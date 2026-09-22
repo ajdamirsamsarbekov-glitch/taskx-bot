@@ -1,0 +1,39 @@
+{
+  "name": "taskx",
+  "version": "1.0.0",
+  "description": "Telegram-based task marketplace with escrow payments",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "db:migrate": "cd packages/database && npm run migrate",
+    "db:seed": "cd packages/database && npm run seed",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "prettier": "^3.1.0",
+    "turbo": "^1.11.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.0",
+    "better-sqlite3": "^12.11.1",
+    "dotenv": "^18.0.2",
+    "node-telegram-bot-api": "^2.1.0",
+    "pg": "^8.23.0"
+  }
+}
