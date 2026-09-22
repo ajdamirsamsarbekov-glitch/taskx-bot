@@ -1,0 +1,17 @@
+version: "1"
+app:
+  name: taskx-bot
+  services:
+    - name: bot
+      type: worker
+      instance_type: free
+      build:
+        type: buildpack
+      env:
+        - name: BOT_TOKEN
+          value: "8666914335:AAGnN7l7lUUPeiFnTqHzmq4GCBwqK9zGip8"
+        - name: SUPABASE_URL
+          value: "https://hjoosjstmginrpatkvbm.supabase.co"
+        - name: SUPABASE_SERVICE_ROLE_KEY
+          value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhqb29zanN0bWdpbnJwYXRrdmJtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MDA3NTI5MywiZXhwIjoyMTA1NjUxMjkzfQ.wuMdC1ZsckIUB5PKjRdNH1vaJLSaRxjzevBxay2DbBI"
+      run: node supabase-bot-v2.js
