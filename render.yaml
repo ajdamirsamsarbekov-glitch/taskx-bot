@@ -1,0 +1,25 @@
+{
+  "services": [
+    {
+      "type": "worker",
+      "name": "taskx-bot",
+      "runtime": "node",
+      "buildCommand": "npm install",
+      "startCommand": "node supabase-bot-v2.js",
+      "envVars": [
+        {
+          "key": "BOT_TOKEN",
+          "sync": false
+        },
+        {
+          "key": "SUPABASE_URL",
+          "sync": false
+        },
+        {
+          "key": "SUPABASE_SERVICE_ROLE_KEY",
+          "sync": false
+        }
+      ]
+    }
+  ]
+}
