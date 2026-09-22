@@ -1,0 +1,8 @@
+[build]
+builder = "nixpacks"
+
+[build.nixpacksPlan.phases.build]
+cmds = ["npm install"]
+
+[build.nixpacksPlan.start]
+cmd = "node supabase-bot-v2.js"
