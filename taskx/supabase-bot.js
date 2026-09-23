@@ -320,7 +320,7 @@ bot.command('deposit', async (ctx) => {
   const user = await getOrCreateUser(telegramId, ctx.from?.first_name);
 
   await ctx.replyWithPhoto(
-    { source: 'C:\\Users\\User\\Desktop\\photo_2026-09-23_09-14-53.jpg' },
+    { source: './qr-payment.jpg' },
     {
       caption:
         `💳 <b>Пополнение баланса</b>\n\n` +
