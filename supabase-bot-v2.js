@@ -247,28 +247,121 @@ bot.on('callback_query', async (ctx) => {
         break;
 
       case 'wallet':
-        const { data: transactions } = await supabase
+        message = `💰 <b>Кошелёк</b>\n\nВыберите действие:`;
+        await ctx.reply(message, {
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '📊 История транзакций', callback_data: 'transactions' }],
+              [{ text: '💳 Пополнить баланс', callback_data: 'deposit' }],
+              [{ text: '💸 Вывести средства', callback_data: 'withdraw' }],
+              [{ text: '🔙 Назад', callback_data: 'back_main' }],
+            ],
+          },
+        });
+        await ctx.answerCallbackQuery();
+        return;
+
+      case 'transactions':
+        const { data: allTransactions } = await supabase
           .from('transactions')
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
-          .limit(5);
+          .limit(20);
 
         message =
-          `💰 <b>Кошелёк</b>\n\n` +
+          `📊 <b>История транзакций</b>\n\n` +
           `💵 Доступно: ${user.balance} сом\n` +
-          `🔒 Заморожено: ${user.frozen_balance} сом\n\n` +
-          `<b>История транзакций:</b>\n`;
+          `🔒 Заморожено: ${user.frozen_balance} сом\n\n`;
 
-        if (!transactions || transactions.length === 0) {
-          message += `Пока пусто`;
+        if (!allTransactions || allTransactions.length === 0) {
+          message += `Транзакций пока нет`;
         } else {
-          transactions.forEach(tx => {
+          allTransactions.forEach(tx => {
             const sign = tx.amount > 0 ? '+' : '';
-            message += `${sign}${tx.amount} сом - ${tx.type}\n`;
+            const typeEmoji = {
+              'DEPOSIT': '💳',
+              'WITHDRAW': '💸',
+              'ESCROW_LOCK': '🔒',
+              'ESCROW_RELEASE': '✅',
+              'PLATFORM_FEE': '🏦',
+              'REFUND': '↩️'
+            }[tx.type] || '💰';
+
+            const typeName = {
+              'DEPOSIT': 'Пополнение',
+              'WITHDRAW': 'Вывод',
+              'ESCROW_LOCK': 'Резерв',
+              'ESCROW_RELEASE': 'Выплата',
+              'PLATFORM_FEE': 'Комиссия',
+              'REFUND': 'Возврат'
+            }[tx.type] || tx.type;
+
+            const date = new Date(tx.created_at).toLocaleString('ru', {
+              day: '2-digit',
+              month: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+
+            message += `${typeEmoji} ${typeName}\n`;
+            message += `${sign}${tx.amount} сом\n`;
+            if (tx.description) {
+              message += `📝 ${tx.description}\n`;
+            }
+            message += `🕐 ${date}\n\n`;
           });
         }
         break;
+
+      case 'deposit':
+        message =
+          `💳 <b>Пополнение баланса</b>\n\n` +
+          `Выберите способ оплаты:`;
+        await ctx.reply(message, {
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🏦 МБанк (скоро)', callback_data: 'pay_mbank' }],
+              [{ text: '💳 Visa/MasterCard (скоро)', callback_data: 'pay_card' }],
+              [{ text: '🔙 Назад', callback_data: 'wallet' }],
+            ],
+          },
+        });
+        await ctx.answerCallbackQuery();
+        return;
+
+      case 'withdraw':
+        message =
+          `💸 <b>Вывод средств</b>\n\n` +
+          `Доступно: ${user.balance} сом\n\n` +
+          `Минимальная сумма вывода: 100 сом\n` +
+          `Комиссия: 0%\n\n` +
+          `<i>Функция в разработке...</i>`;
+        break;
+
+      case 'back_main':
+        await ctx.reply(
+          `📋 <b>Главное меню TaskX</b>\n\n` +
+          `💵 Баланс: ${user.balance} сом\n` +
+          `🔒 Заморожено: ${user.frozen_balance} сом\n\n` +
+          `Выберите действие:`,
+          {
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: '🔍 Найти задания', callback_data: 'tasks' }],
+                [{ text: '➕ Создать задание', callback_data: 'create' }],
+                [{ text: '📝 Мои задания', callback_data: 'my_tasks' }],
+                [{ text: '💰 Кошелёк', callback_data: 'wallet' }],
+                [{ text: '👤 Профиль', callback_data: 'profile' }],
+              ],
+            },
+          }
+        );
+        await ctx.answerCallbackQuery();
+        return;
 
       case 'profile':
         message =
