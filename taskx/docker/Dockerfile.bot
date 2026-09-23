@@ -1,0 +1,17 @@
+FROM node:20-alpine AS base
+
+FROM base AS builder
+WORKDIR /app
+COPY package*.json ./
+COPY turbo.json ./
+COPY packages ./packages
+COPY apps/bot ./apps/bot
+RUN npm install
+RUN npm run build --filter=@taskx/bot
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/apps/bot/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+CMD ["node", "dist/index.js"]

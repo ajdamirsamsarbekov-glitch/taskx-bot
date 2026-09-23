@@ -1,0 +1,26 @@
+{
+  "name": "@taskx/database",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "migrate": "typeorm migration:run -d dist/data-source.js",
+    "migrate:revert": "typeorm migration:revert -d dist/data-source.js",
+    "migrate:generate": "typeorm migration:generate -d dist/data-source.js",
+    "seed": "ts-node src/seeds/index.ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@taskx/types": "*",
+    "typeorm": "^0.3.19",
+    "pg": "^8.11.3",
+    "decimal.js": "^10.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

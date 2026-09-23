@@ -1,0 +1,20 @@
+FROM node:20-alpine AS base
+
+FROM base AS builder
+WORKDIR /app
+COPY package*.json ./
+COPY turbo.json ./
+COPY packages ./packages
+COPY apps/web ./apps/web
+RUN npm install
+RUN npm run build --filter=@taskx/web
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/apps/web/.next ./.next
+COPY --from=builder /app/apps/web/public ./public
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/web/package.json ./package.json
+EXPOSE 3001
+CMD ["npm", "start"]
